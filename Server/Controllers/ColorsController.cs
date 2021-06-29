@@ -13,48 +13,48 @@ namespace CarRentalManagement.Server.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class MakesController : ControllerBase
+    public class ColorsController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork; 
 
-        public MakesController(IUnitOfWork unitOfWork)
+        public ColorsController(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork; 
         }
 
-        // GET: api/Makes
+        // GET: api/Colors
         [HttpGet]
-        public async Task<IActionResult> GetMakes()
+        public async Task<IActionResult> GetColors()
         {
-            var makes = await _unitOfWork.Makes.GetAll();
-            return Ok(makes); 
+            var Colors = await _unitOfWork.Colors.GetAll();
+            return Ok(Colors); 
         }
 
-        // GET: api/Makes/5
+        // GET: api/Colors/5
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetMake(int id)
+        public async Task<IActionResult> GetColor(int id)
         {
-            var make = await _unitOfWork.Makes.Get(m => m.Id == id); 
+            var Color = await _unitOfWork.Colors.Get(m => m.Id == id); 
 
-            if (make == null)
+            if (Color == null)
             {
                 return NotFound();
             }
 
-            return Ok(make);
+            return Ok(Color);
         }
 
-        // PUT: api/Makes/5
+        // PUT: api/Colors/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutMake(int id, Make make)
+        public async Task<IActionResult> PutColor(int id, Color Color)
         {
-            if (id != make.Id)
+            if (id != Color.Id)
             {
                 return BadRequest();
             }
 
-            _unitOfWork.Makes.Update(make); 
+            _unitOfWork.Colors.Update(Color); 
 
 
             try
@@ -63,7 +63,7 @@ namespace CarRentalManagement.Server.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!await MakeExists(id))
+                if (!await ColorExists(id))
                 {
                     return NotFound();
                 }
@@ -76,32 +76,32 @@ namespace CarRentalManagement.Server.Controllers
             return NoContent();
         }
 
-        // POST: Makes
+        // POST: Colors
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Make>> PostMake(Make make)
+        public async Task<ActionResult<Color>> PostColor(Color Color)
         {
-            await _unitOfWork.Makes.Insert(make);
+            await _unitOfWork.Colors.Insert(Color);
             await _unitOfWork.Save(HttpContext); 
-            return CreatedAtAction("GetMake", new { id = make.Id }, make);
+            return CreatedAtAction("GetColor", new { id = Color.Id }, Color);
         }
 
-        // DELETE: Makes/5
+        // DELETE: Colors/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteMake(int id)
+        public async Task<IActionResult> DeleteColor(int id)
         {
-            var make = await _unitOfWork.Makes.Get(m => m.Id == id);
-            if (make == null)
+            var Color = await _unitOfWork.Colors.Get(m => m.Id == id);
+            if (Color == null)
                 return NotFound(); 
 
-            await _unitOfWork.Makes.Delete(id);
+            await _unitOfWork.Colors.Delete(id);
             await _unitOfWork.Save(HttpContext);
             return NoContent();
         }
 
-        private async Task<bool> MakeExists(int id)
+        private async Task<bool> ColorExists(int id)
         {
-            return await _unitOfWork.Makes.Any(m => m.Id == id);
+            return await _unitOfWork.Colors.Any(m => m.Id == id);
         }
     }
 }

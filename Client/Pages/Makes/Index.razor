@@ -1,0 +1,67 @@
+﻿@page "/makes/"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+
+
+@attribute [Authorize]
+@inject HttpClient _client
+@inject IJSRuntime js
+
+<h3 class="card-title">Make list</h3>
+<hr />
+<br/>
+
+@if(Makes == null)
+            {
+                <div class="alert alert-info">Loading Makes... </div>
+            }
+            else
+            {
+                <table class="table table-responsive">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Name</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach(var make in Makes)
+                {
+                    <tr>
+                        <td>@make.Name</td>
+                        <td>
+                            <a href="/makes/view/@make.Id" class="btn btn-primary">
+                                <span class="oi oi-book"></span>
+                            </a>
+                            <a href="/makes/edit/@make.Id" class="btn btn-warning">
+                                <span class="oi oi-pencil"></span>
+                            </a>
+                            <button class="btn btn-danger" @onclick="(() => Delete(make.Id))">
+                                <span class="oi oi-delete"></span>
+                            </button>
+                        </td>
+                    </tr>                
+                }
+                    </tbody>
+                </table>
+            }
+
+@code {
+
+    private async Task Delete(int makeId)
+    {
+        var make = Makes.First(m => m.Id == makeId);
+        var confirm = await js.InvokeAsync<bool>("confirm", $"Do you want to delete {make.Name}");
+        if (confirm)
+        {
+            await _client.DeleteAsync(Endpoints.MakesEndpoint+$"/{makeId}");
+            await OnInitializedAsync();
+        }
+    }
+    private List<Make> Makes;
+    protected override async Task OnInitializedAsync()
+    {
+        Makes = await _client.GetFromJsonAsync<List<Make>>(Endpoints.MakesEndpoint);
+    }
+
+}

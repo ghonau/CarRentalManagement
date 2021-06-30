@@ -56,7 +56,7 @@ namespace CarRentalManagement.Server.Repository
 
             foreach(var include in includes?? Enumerable.Empty<string>())
             {
-                query.Include(include); 
+               query =  query.Include(include); 
             }
 
             if(orderBy != null)
@@ -64,7 +64,8 @@ namespace CarRentalManagement.Server.Repository
                 query = orderBy(query); 
             }
 
-            return await query.AsNoTracking().ToListAsync(); 
+            var result =  await query.AsNoTracking().ToListAsync();
+            return result; 
         }
 
         public async Task Insert(T entity)

@@ -1,0 +1,74 @@
+﻿@page "/customers/"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+
+
+@attribute [Authorize]
+@inject HttpClient _client
+@inject IJSRuntime js
+
+<h3 class="card-title">Customers list</h3>
+<hr />
+<br />
+
+@if (Customers == null)
+{
+    <div class="alert alert-info">Loading Customers... </div>
+}
+else
+{
+    <table class="table table-responsive">
+        <thead class="thead-light">
+            <tr>
+                <th>Tax Id</th>
+                <th>Email</th>
+                <th>Contact</th>
+                <th>Address</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var customer in Customers)
+            {
+            <tr>
+                <td>@customer.TaxId</td>
+                <td>@customer.EmailAddress</td>
+                <td>@customer.ContactNumber</td>
+                <td>@customer.Address</td>
+                <td>
+                    <a href="/customers/view/@customer.Id" class="btn btn-primary">
+                        <span class="oi oi-book"></span>
+                    </a>
+                    <a href="/customers/edit/@customer.Id" class="btn btn-warning">
+                        <span class="oi oi-pencil"></span>
+                    </a>
+                    <button class="btn btn-danger" @onclick="(() => Delete(customer.Id))">
+                        <span class="oi oi-delete"></span>
+                    </button>
+                </td>
+            </tr>
+
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+
+    private async Task Delete(int customerId)
+    {
+        var customer = Customers.First(m => m.Id == customerId);
+        var confirm = await js.InvokeAsync<bool>("confirm", $"Do you want to delete {customer.TaxId}");
+        if (confirm)
+        {
+            await _client.DeleteAsync(Endpoints.CustomersEndpoint + $"/{customerId}");
+            await OnInitializedAsync();
+        }
+    }
+    private List<Customer> Customers;
+    protected override async Task OnInitializedAsync()
+    {
+        Customers = await _client.GetFromJsonAsync<List<Customer>>(Endpoints.CustomersEndpoint);
+    }
+
+}

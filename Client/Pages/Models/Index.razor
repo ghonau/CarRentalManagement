@@ -7,18 +7,22 @@
 @inject HttpClient _client
 @inject IJSRuntime js
 
-<h3 class="card-title">Model list</h3>
+<h3 class="card-title">Models list</h3>
 <hr />
 <br />
+<a href="/models/create" class="btn btn-secondary">
+    <span class="oi oi-plus"></span>
+    Create New Model
+</a>
 
 @if (Models == null)
 {
-    <div class="alert alert-info">Loading Makes... </div>
+    <div class="alert alert-info">Loading Models... </div>
 }
 else
 {
     <table class="table table-responsive">
-        <thead class="thead-dark">
+        <thead class="thead-light">
             <tr>
                 <th>Name</th>
                 <th>Actions</th>

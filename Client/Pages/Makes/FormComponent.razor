@@ -1,0 +1,25 @@
+﻿
+<h3 class="card-title">Edit Make</h3>
+<br />
+<hr />
+
+<EditForm Model="@make" OnValidSubmit="@OnValidSubmit">
+    <DataAnnotationsValidator></DataAnnotationsValidator>
+    <ValidationSummary></ValidationSummary>
+
+    <div class="form-group">
+        <label>Name:</label>
+        <InputText @bind-Value="@make.Name" class="form-control"></InputText>
+        <ValidationMessage For="@(() => make.Name)"></ValidationMessage>
+    </div>
+    <button type="submit" class="btn btn-primary btn-block">@ButtonText</button>
+
+</EditForm>
+
+@code{
+
+    [Parameter] public Make make { get; set; }
+    [Parameter] public string ButtonText { get; set; } = "Save";
+    [Parameter] public EventCallback OnValidSubmit { get; set; }
+
+}

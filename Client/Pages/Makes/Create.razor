@@ -6,24 +6,13 @@
 <br />
 <hr />
 
-<EditForm Model="@make" OnValidSubmit="CreateMake">
-    <DataAnnotationsValidator></DataAnnotationsValidator>
-    <ValidationSummary></ValidationSummary>
-
-    <div class="form-group">
-        <label>Name:</label>
-        <InputText @bind-Value="@make.Name" class="form-control"></InputText>
-        <ValidationMessage For="@(() => make.Name)"></ValidationMessage>
-    </div>
-    <button type="submit" class="btn btn-primary btn-block">Create Make</button>
-
-</EditForm>
-
+<FormComponent ButtonText="Create Make" make="make" OnValidSubmit="CreateMake"></FormComponent>
 
 @code {
-    Make make = new Make();
- 
-    private async Task CreateMake()
+        Make make = new Make();  
+  
+
+        private async Task CreateMake()
     {
         await _client.PostAsJsonAsync(Endpoints.MakesEndpoint, make);
         _navManager.NavigateTo("/makes");

@@ -1,0 +1,20 @@
+﻿<EditForm Model="@color" OnValidSubmit="@OnValidSubmit">
+    <DataAnnotationsValidator></DataAnnotationsValidator>
+    <ValidationSummary></ValidationSummary>
+
+    <div class="form-group">
+        <label>Name:</label>
+        <InputText @bind-Value="@color.Name" class="form-control"></InputText>
+        <ValidationMessage For="@(() => color.Name)"></ValidationMessage>
+    </div>
+    <button type="submit" class="btn btn-primary btn-block">@ButtonText</button>
+
+</EditForm>
+
+@code{
+
+    [Parameter] public Color color { get; set; }
+    [Parameter] public string ButtonText { get; set; } = "Save";
+    [Parameter] public EventCallback OnValidSubmit { get; set; }
+
+}

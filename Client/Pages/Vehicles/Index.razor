@@ -7,9 +7,7 @@
 @inject HttpClient _client
 @inject IJSRuntime js
 
-<h3 class="card-title">Vehicles list</h3>
-<hr />
-<br />
+<HeadingComponent Text="Vehicles List"></HeadingComponent>
 <a href="/vehicles/create" class="btn btn-secondary">
     <span class="oi oi-plus"></span>
     Create New Vehicle
@@ -21,7 +19,7 @@
 }
 else
 {
-    <table class="table ">
+    <table class="table">
         <thead class="thead-light">
             <tr>
                 <th>Make</th>

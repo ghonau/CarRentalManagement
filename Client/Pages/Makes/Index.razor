@@ -7,9 +7,8 @@
 @inject HttpClient _client
 @inject IJSRuntime js
 
-<h3 class="card-title">Makes list</h3>
-<hr />
-<br/>
+<HeadingComponent Text="Makes List"></HeadingComponent>
+
 <a href="/makes/create" class="btn btn-secondary">
     <span class="oi oi-plus"></span>
     Create New Model
@@ -22,7 +21,7 @@
             }
             else
             {
-                <table class="table table-responsive">
+                <table class="table">
                     <thead class="thead-light">
                         <tr>
                             <th>Name</th>

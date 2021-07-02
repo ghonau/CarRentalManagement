@@ -1,10 +1,13 @@
 ﻿using CarRentalManagement.Server.Data;
 using CarRentalManagement.Server.IRepository;
+using CarRentalManagement.Server.Models;
 using CarRentalManagement.Shared.Domain;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace CarRentalManagement.Server.Repository
@@ -18,11 +21,12 @@ namespace CarRentalManagement.Server.Repository
         private IGenericRepository<Customer> _customers;
         private IGenericRepository<Vehicle> _vehicles;
         private IGenericRepository<Booking> _bookings;
+        private UserManager<ApplicationUser> _userManager; 
 
-
-        public UnitOfWork(ApplicationDbContext context)
+        public UnitOfWork(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
-            _context = context; 
+            _context = context;
+            _userManager = userManager; 
         }
         public IGenericRepository<Make> Makes => _makes ??= new GenericRepository<Make>(_context);
         public IGenericRepository<Color> Colors => _colors ??= new GenericRepository<Color>(_context);
@@ -41,16 +45,22 @@ namespace CarRentalManagement.Server.Repository
         {
             var entries = _context.ChangeTracker.Entries()
                 .Where(entry => entry.State == EntityState.Added || entry.State == EntityState.Modified);
+            
+            //var user = httpCotext.User.Identity.Name; 
+            
+            var userId = httpCotext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var user = await _userManager.FindByIdAsync(userId); 
+
             foreach(var entry in entries)
             {
                 var entity = ((BaseDomainModel)entry.Entity);                 
                 entity.DateUpdated = DateTime.Now;
-                entity.UpdatedBy = httpCotext.User.Identity.Name; 
+                entity.UpdatedBy = user.UserName; 
 
                 if (entry.State == EntityState.Added)
                 {
                     entity.DateCreated = DateTime.Now;
-                    entity.CreatedBy = httpCotext.User.Identity.Name; 
+                    entity.CreatedBy = user.UserName; 
                 }
             }
 

@@ -7,9 +7,8 @@
 @inject HttpClient _client
 @inject IJSRuntime js
 
-<h3 class="card-title">Colors list</h3>
-<hr />
-<br />
+<HeadingComponent Text="Colors List"></HeadingComponent>
+
 
 <a href="colors/create" class="btn btn-secondary">
     <span class="oi oi-plus"></span>
@@ -22,7 +21,7 @@
 }
 else
 {
-    <table class="table table-responsive">
+    <table class="table">
         <thead class="thead-light">
             <tr>
                 <th>Name</th>

@@ -7,10 +7,7 @@
 @inject HttpClient _client
 @inject IJSRuntime js
 
-<h3 class="card-title">Colors list</h3>
-<hr />
-<br />
-
+<HeadingComponent Text="Bookings List"></HeadingComponent>
 
 <a href="/bookings/create" class="btn btn-secondary">
     <span class="oi oi-plus"></span>
@@ -24,7 +21,7 @@
 }
 else
 {
-    <table class="table table-responsive">
+    <table class="table">
         <thead class="thead-light">
             <tr>
                 <th>Customer Tax Id</th>
@@ -39,7 +36,7 @@ else
                 <tr>
                     <td>@booking.Customer.TaxId</td>
                     <td>@booking.DateCreated.Date.ToString("dd MMMM yyyy")</td>
-                    <td>@((booking.DateIn - booking.DateOut).TotalDays.ToString())</td>
+                    <td>@((booking.DateIn == null ? "To Be Determined" : (booking.DateIn.Value - booking.DateOut).TotalDays.ToString()))</td>
                     <td>@booking.Customer.TaxId</td>
                     <td>
                         <a href="/bookings/view/@booking.Id" class="btn btn-primary">

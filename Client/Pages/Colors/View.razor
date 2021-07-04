@@ -1,0 +1,20 @@
+﻿@page "/colors/view/{id:int}"
+@inject HttpClient _client
+@inject NavigationManager _navManager
+
+<HeadingComponent Text="Booking Details"></HeadingComponent>
+
+<FormComponent color="color" Disabled="true"></FormComponent>
+
+
+@code {
+
+    [Parameter] public int id { get; set; }
+    Color color = new Color();
+    protected async override Task OnParametersSetAsync()
+    {
+        color = await _client.GetFromJsonAsync<Color>($"{Endpoints.ColorsEndpoint}/{id}");
+    }
+}
+
+

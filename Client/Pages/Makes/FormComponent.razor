@@ -1,8 +1,8 @@
 ﻿
-<h3 class="card-title">Edit Make</h3>
-<br />
-<hr />
+<HeadingComponent Text="Edit Make"></HeadingComponent>
+<fieldset disabled="Disabled">
 
+</fieldset>
 <EditForm Model="@make" OnValidSubmit="@OnValidSubmit">
     <DataAnnotationsValidator></DataAnnotationsValidator>
     <ValidationSummary></ValidationSummary>
@@ -12,12 +12,16 @@
         <InputText @bind-Value="@make.Name" class="form-control"></InputText>
         <ValidationMessage For="@(() => make.Name)"></ValidationMessage>
     </div>
-    <button type="submit" class="btn btn-primary btn-block">@ButtonText</button>
+    @if (!Disabled)
+    {
+        <button type="submit" class="btn btn-primary btn-block">@ButtonText</button>
+    }
 
 </EditForm>
 
 @code{
 
+    [Parameter] public bool Disabled { get; set; } = false;
     [Parameter] public Make make { get; set; }
     [Parameter] public string ButtonText { get; set; } = "Save";
     [Parameter] public EventCallback OnValidSubmit { get; set; }

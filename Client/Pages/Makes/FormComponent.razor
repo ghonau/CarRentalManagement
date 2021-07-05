@@ -1,23 +1,24 @@
 ﻿
-<HeadingComponent Text="Edit Make"></HeadingComponent>
+
 <fieldset disabled="Disabled">
+    <EditForm Model="@make" OnValidSubmit="@OnValidSubmit">
+        <DataAnnotationsValidator></DataAnnotationsValidator>
+        <ValidationSummary></ValidationSummary>
 
+        <div class="form-group">
+            <label>Name:</label>
+            <InputText @bind-Value="@make.Name" class="form-control"></InputText>
+            <ValidationMessage For="@(() => make.Name)"></ValidationMessage>
+        </div>
+        @if (!Disabled)
+        {
+            <button type="submit" class="btn btn-primary btn-block">@ButtonText</button>
+        }
+        <BackToList ListUrl="/makes/"></BackToList>
+
+    </EditForm>
 </fieldset>
-<EditForm Model="@make" OnValidSubmit="@OnValidSubmit">
-    <DataAnnotationsValidator></DataAnnotationsValidator>
-    <ValidationSummary></ValidationSummary>
 
-    <div class="form-group">
-        <label>Name:</label>
-        <InputText @bind-Value="@make.Name" class="form-control"></InputText>
-        <ValidationMessage For="@(() => make.Name)"></ValidationMessage>
-    </div>
-    @if (!Disabled)
-    {
-        <button type="submit" class="btn btn-primary btn-block">@ButtonText</button>
-    }
-
-</EditForm>
 
 @code{
 

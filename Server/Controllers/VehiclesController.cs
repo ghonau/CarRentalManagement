@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using CarRentalManagement.Server.Data;
 using CarRentalManagement.Shared.Domain;
 using CarRentalManagement.Server.IRepository;
+using Microsoft.AspNetCore.Hosting;
 
 namespace CarRentalManagement.Server.Controllers
 {
@@ -15,11 +16,16 @@ namespace CarRentalManagement.Server.Controllers
     [ApiController]
     public class VehiclesController : ControllerBase
     {
-        private readonly IUnitOfWork _unitOfWork; 
+        
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IHttpContextAccessor _httpContextAccessor; 
 
-        public VehiclesController(IUnitOfWork unitOfWork)
+        public VehiclesController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment, IHttpContextAccessor httpContextAccessor)
         {
-            _unitOfWork = unitOfWork; 
+            _unitOfWork = unitOfWork;
+            _webHostEnvironment = webHostEnvironment;
+            _httpContextAccessor = httpContextAccessor; 
         }
 
         // GET: api/Vehicles
@@ -49,14 +55,20 @@ namespace CarRentalManagement.Server.Controllers
         // PUT: api/Vehicles/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutVehicle(int id, Vehicle Vehicle)
+        public async Task<IActionResult> PutVehicle(int id, Vehicle vehicle)
         {
-            if (id != Vehicle.Id)
+            if (id != vehicle.Id)
             {
                 return BadRequest();
             }
 
-            _unitOfWork.Vehicles.Update(Vehicle); 
+            if (vehicle.Image != null)
+            {
+                var filePath = CreateFilePath(vehicle.Image, vehicle.ImageName);
+                vehicle.ImageName = filePath;
+            }
+
+            _unitOfWork.Vehicles.Update(vehicle); 
 
 
             try
@@ -81,11 +93,16 @@ namespace CarRentalManagement.Server.Controllers
         // POST: Vehicles
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Vehicle>> PostVehicle(Vehicle Vehicle)
+        public async Task<ActionResult<Vehicle>> PostVehicle(Vehicle vehicle)
         {
-            await _unitOfWork.Vehicles.Insert(Vehicle);
+            if (vehicle.Image != null)
+            {
+                var filePath = CreateFilePath(vehicle.Image, vehicle.ImageName);
+                vehicle.ImageName = filePath; 
+            }
+            await _unitOfWork.Vehicles.Insert(vehicle);
             await _unitOfWork.Save(HttpContext); 
-            return CreatedAtAction("GetVehicle", new { id = Vehicle.Id }, Vehicle);
+            return CreatedAtAction("GetVehicle", new { id = vehicle.Id }, vehicle);
         }
 
         // DELETE: Vehicles/5
@@ -105,5 +122,18 @@ namespace CarRentalManagement.Server.Controllers
         {
             return await _unitOfWork.Vehicles.Any(m => m.Id == id);
         }
+
+        private string CreateFilePath(byte[] image, string name)
+        {
+            var host = _httpContextAccessor.HttpContext.Request.Host.Value;
+            var path = $"{_webHostEnvironment.WebRootPath}\\uploads\\{name}";
+            using (var fileStream = System.IO.File.Create(path))
+            {
+                fileStream.Write(image, 0, image.Length);
+                fileStream.Close();
+            }
+            return $"https://{host}/uploads/{name}";
+        }
+
     }
 }

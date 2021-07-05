@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Toolbelt.Blazor;
 
@@ -30,7 +31,7 @@ namespace CarRentalManagement.Client.Services
                 case System.Net.HttpStatusCode.NotFound:
                     {
 
-                        _navigationManager.NavigateTo("/400");
+                        _navigationManager.NavigateTo("/404");
                         message = "The requested resource was not found"; 
                         break; 
                     }
@@ -48,6 +49,8 @@ namespace CarRentalManagement.Client.Services
                     message = "Something went wrong, please contact Administrator";
                     break; 
             }
+
+            throw new HttpRequestException(message); 
         }
         public void DisposeEvent() => _interceptor.AfterSend -= InterceptResponse; 
     }

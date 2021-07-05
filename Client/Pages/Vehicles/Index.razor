@@ -1,7 +1,7 @@
 ﻿@page "/vehicles/"
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
-
+@implements IDisposable
 
 @attribute [Authorize]
 @inject HttpClient _client
@@ -19,9 +19,10 @@
 }
 else
 {
-    <table class="table">
+    <table class="table" id="vehicleTable">
         <thead class="thead-light">
             <tr>
+                <th></th>
                 <th>Make</th>
                 <th>Model</th>
                 <th>Year</th>
@@ -33,6 +34,7 @@ else
             @foreach (var vehicle in Vehicles)
             {
             <tr>
+                <td><img src="@vehicle.ImageName" style="height:150px; width:150px;" /></td>
                 <td>@vehicle.Make.Name</td>
                 <td>@vehicle.Model.Name</td>
                 <td>@vehicle.Year</td>
@@ -67,10 +69,17 @@ else
             await OnInitializedAsync();
         }
     }
+    protected async override void OnAfterRender(bool firstRender)
+    {
+        await js.InvokeVoidAsync("AddDataTable", "#vehicleTable");
+    }
     private List<Vehicle> Vehicles;
     protected override async Task OnInitializedAsync()
     {
         Vehicles = await _client.GetFromJsonAsync<List<Vehicle>>(Endpoints.VehiclesEndpoint);
     }
-
+    void IDisposable.Dispose()
+    {
+        js.InvokeVoidAsync("DisposeDataTable", "#vehicleTable");
+    }
 }

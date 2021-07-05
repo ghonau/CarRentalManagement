@@ -1,7 +1,7 @@
 ﻿@page "/vehicles/view/{id:int}"
 @inject HttpClient _client
 @inject NavigationManager _navManager
-
+@using CarRentalManagement.Client.Components; 
 <HeadingComponent Text="Vehicle Details"></HeadingComponent>
 
 <FormComponent vehicle="vehicle" Disabled="true"></FormComponent>

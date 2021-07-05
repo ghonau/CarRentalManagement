@@ -2,11 +2,7 @@
 @inject HttpClient _client
 @inject NavigationManager _navManager
 
-<h3 class="card-title">Edit Vehicle</h3>
-<br />
-<hr />
-
-<FormComponent ButtonText="Update Vehicle" OnValidSubmit="UpdateVehicle" vehicle="@vehicle"></FormComponent>
+<FormComponent ButtonText="Edit Vehicle" OnValidSubmit="UpdateVehicle" Disabled="false" vehicle="@vehicle"></FormComponent>
 @code{
 
     [Parameter] public int id { get; set; }

@@ -2,7 +2,7 @@
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 
-
+@implements IDisposable
 @attribute [Authorize]
 @inject HttpClient _client
 @inject IJSRuntime js
@@ -21,43 +21,45 @@
 }
 else
 {
-    <table class="table">
-        <thead class="thead-light">
+<table class="table" id="bookingTable">
+    <thead class="thead-light">
+        <tr>
+            <th>Customer Tax Id</th>
+            <th>Date</th>
+            <th>Duration</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var booking in Bookings)
+        {
             <tr>
-                <th>Customer Tax Id</th>
-                <th>Date</th>
-                <th>Duration</th>
-                <th>Actions</th>
+                <td>@booking.Customer.TaxId</td>
+                <td>@booking.DateCreated.Date.ToString("dd MMMM yyyy")</td>
+                <td>@((booking.DateIn == null ? "To Be Determined" : (booking.DateIn.Value - booking.DateOut).TotalDays.ToString()))</td>                
+                <td>
+                    <a href="/bookings/view/@booking.Id" class="btn btn-primary">
+                        <span class="oi oi-book"></span>
+                    </a>
+                    <a href="/bookings/edit/@booking.Id" class="btn btn-warning">
+                        <span class="oi oi-pencil"></span>
+                    </a>
+                    <button class="btn btn-danger" @onclick="(() => Delete(booking.Id))">
+                        <span class="oi oi-delete"></span>
+                    </button>
+                </td>
             </tr>
-        </thead>
-        <tbody>
-            @foreach (var booking in Bookings)
-            {
-                <tr>
-                    <td>@booking.Customer.TaxId</td>
-                    <td>@booking.DateCreated.Date.ToString("dd MMMM yyyy")</td>
-                    <td>@((booking.DateIn == null ? "To Be Determined" : (booking.DateIn.Value - booking.DateOut).TotalDays.ToString()))</td>
-                    <td>@booking.Customer.TaxId</td>
-                    <td>
-                        <a href="/bookings/view/@booking.Id" class="btn btn-primary">
-                            <span class="oi oi-book"></span>
-                        </a>
-                        <a href="/bookings/edit/@booking.Id" class="btn btn-warning">
-                            <span class="oi oi-pencil"></span>
-                        </a>
-                        <button class="btn btn-danger" @onclick="(() => Delete(booking.Id))">
-                            <span class="oi oi-delete"></span>
-                        </button>
-                    </td>
-                </tr>
 
-            }
-        </tbody>
-    </table>
+        }
+    </tbody>
+</table>
 }
 
-@code {
-
+@code {      
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        await js.InvokeVoidAsync("AddDataTable", "#bookingTable");
+    }
     private async Task Delete(int bookingId)
     {
         var booking = Bookings.First(m => m.Id == bookingId);
@@ -73,5 +75,8 @@ else
     {
         Bookings = await _client.GetFromJsonAsync<List<Booking>>(Endpoints.BookingsEndpoint);
     }
-
+    void IDisposable.Dispose()
+    {
+        js.InvokeVoidAsync("DisposeDataTable", "#bookingTable"); 
+    }
 }

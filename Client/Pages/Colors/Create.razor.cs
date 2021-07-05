@@ -1,4 +1,5 @@
-﻿using CarRentalManagement.Client.Services;
+﻿using CarRentalManagement.Client.Contracts;
+using CarRentalManagement.Client.Services;
 using CarRentalManagement.Client.Statics;
 using CarRentalManagement.Shared.Domain;
 using Microsoft.AspNetCore.Components;
@@ -12,22 +13,16 @@ using System.Threading.Tasks;
 
 namespace CarRentalManagement.Client.Pages.Colors
 {
-    public partial class Create : IDisposable
+    public partial class Create 
     {
-        [Inject] HttpInterceptorService HttpInterceptorServic { get; set; }
-        [Inject] HttpClient HttpClient { get; set; }
-        [Inject] NavigationManager NavigationManager { get; set; }
-
-        public void Dispose()
-        {
-            HttpInterceptorServic.DisposeEvent();
-        }
         
+        [Inject] IHttpRepository<Color> _client { get; set; }
+        [Inject] NavigationManager NavigationManager { get; set; }
+       
         Color color = new Color();
         private async Task CreateColor()
         {
-            HttpInterceptorServic.MonitorEvent(); 
-            await HttpClient.PostAsJsonAsync(Endpoints.ColorsEndpoint, color);
+            await _client.Create(Endpoints.ColorsEndpoint, color);                         
             NavigationManager.NavigateTo("/colors");
         }
     }
